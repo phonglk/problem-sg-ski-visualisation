@@ -5,7 +5,7 @@ export default class Footer extends Component {
     return (
       <footer>
         <span id="footer-text-wrap">
-        Made in SF with <span id="heart">♥</span> by <a href="http://www.davidtsai.codes">David Tsai</a>.
+        Made in Singapore with <span id="heart">♥</span> by <a href="https://github.com/phonglk">PhongLK</a>.
         </span>
       </footer>
     );
