@@ -1,7 +1,7 @@
 {
-  "name": "generator-simple-redux",
+  "name": "problem-sg-ski-visualisation",
   "version": "1.0.0",
-  "description": "My simple redux application.",
+  "description": "Visualisation of problem skiing-in-singapore",
   "scripts": {
     "clean": "rimraf dist",
     "build:webpack": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
@@ -12,10 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tsaiDavid/simple-redux-boilerplate.git"
+    "url": "git+https://github.com/phonglk/problem-sg-ski-visualisation.git"
   },
   "license": "MIT",
-  "homepage": "https://github.com/tsaiDavid/simple-redux-boilerplate",
+  "homepage": "https://github.com/phonglk/problem-sg-ski-visualisation",
   "devDependencies": {
     "autoprefixer": "^6.3.1",
     "babel-core": "^6.3.15",
