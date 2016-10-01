@@ -19,41 +19,12 @@ export default class SkiingMap extends Component {
     mapMatrix: PropTypes.array.isRequired,
   }
 
-  constructor(props) {
-    super();
-    this.state = {
-      ...this.transformMatrix(props.mapMatrix),
-    };
-  }
-
-  transformMatrix(mapMatrix) {
-    const elements = [];
-    let maxHeight = -Infinity;
-    let minHeight = Infinity;
-    mapMatrix.forEach((row, y) => {
-      row.forEach((val, x) => {
-        if (val > maxHeight) maxHeight = val;
-        else if (val < minHeight) minHeight = val;
-        elements.push({
-          x,
-          y,
-          height: val,
-        });
-      });
-    });
-    return {
-      elements,
-      minHeight,
-      maxHeight,
-    };
-  }
-
   render() {
-    const { elements, minHeight, maxHeight } = this.state;
+    const { mapMatrix, minHeight, maxHeight } = this.props;
     return (
       <div id="skiing-map">
         <svg width={SVG_WIDTH} height={SVG_HEIGHT} version="1.1" xmlns="http://www.w3.org/2000/svg">
-          {elements.map(({ x, y, height }) => {
+          {mapMatrix.map(({ x, y, height }) => {
             // console.log(...heightToHSV);
             const props = {
               key: `${x}-${y}`,

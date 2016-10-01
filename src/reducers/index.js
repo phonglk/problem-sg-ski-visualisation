@@ -1,21 +1,76 @@
-import { combineReducers } from 'redux';
-import counter from './counter';
+import { START, READ_MAP, PAUSE, NEXT_STEP, RESUME } from '../constants/ActionTypes.js';
 
-/**
- * combineReducers is important to understand. As your app might grow in size
- * and complexity, you will likely begin to split your reducers into separate
- * functions - with each one managing a separate slice of the state! This helper
- * function from 'redux' simply merges the reducers. Keep in mind we are using
- * the ES6 shorthand for property notation.
- *
- * If you're transitioning from Flux, you will notice we only use one store, but
- * instead of relying on multiple stores to manage diff parts of the state, we use
- * various reducers and combine them.
- *
- * More info: http://rackt.org/redux/docs/api/combineReducers.html
- */
-const rootReducer = combineReducers({
-  counter, // you might be used to: counter: counter,
-});
+const defaultSkiingMap = [
+  [4, 8, 7, 3],
+  [2, 5, 9, 3],
+  [6, 3, 2, 5],
+  [4, 4, 1, 6]
+];
+const initialState = {
+  initialSkiingMap: defaultSkiingMap,
+  skiingMap: [],
+  stepsCounter: -1,
+  stepInterval: 1000,
+  isStarted: false,
+  isNextStep: false,
+};
+export default function reducer(state = initialState, action) {
+  switch (action.type) {
+    case START:
+      return {
+        ...state,
+        isStarted: true,
+        isNextStep: true,
+      };
+    case PAUSE:
+      return {
+        ...state,
+        isNextStep: false,
+      };
+    case RESUME:
+      return {
+        ...state,
+        isNextStep: true,
+      };
+    case READ_MAP:
+      return readMap(state);
+    case NEXT_STEP :
+      return nextStep(state);
+    default:
+      return state;
+  }
+}
 
-export default rootReducer;
+function readMap(state) {
+  const skiingMap = [];
+  let maxHeight = -Infinity;
+  let minHeight = Infinity;
+  state.initialSkiingMap.forEach((row, y) => {
+    row.forEach((val, x) => {
+      if (val > maxHeight) maxHeight = val;
+      else if (val < minHeight) minHeight = val;
+      skiingMap.push({
+        x,
+        y,
+        height: val,
+      });
+    });
+  });
+  const updates = {
+    skiingMap,
+    minHeight,
+    maxHeight,
+  };
+  return {
+    ...state,
+    ...updates,
+    stepsCounter: 0,
+  };
+}
+
+function nextStep(state) {
+  return {
+    ...state,
+    stepsCounter: state.stepsCounter + 1,
+  };
+}
