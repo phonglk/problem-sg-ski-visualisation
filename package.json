@@ -43,9 +43,9 @@
     "webpack-hot-middleware": "^2.6.0"
   },
   "dependencies": {
-    "eslint-plugin-babel": "^3.3.0",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
+    "hsv2rgb": "^1.1.0",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
     "react-redux": "^4.1.1",
     "redux-thunk": "^1.0.3"
   }
