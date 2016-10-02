@@ -26,7 +26,16 @@ export class App extends Component {
   }
 
   render() {
-    const { actions, skiingMap, minHeight, maxHeight, isStarted, isNextStep, pause, stop, resume } = this.props;
+    const { actions, skiingMap, minHeight, maxHeight, isStarted,
+      isNextStep, pause, stop, resume,
+      maxPath, nextIndex, currentIndex, processingStacks } = this.props;
+    const mapProps = {
+      mapMatrix: skiingMap,
+      minHeight,
+      maxHeight,
+      currentIndex,
+      processingStacks
+    };
     return (
       <div className="main-app-container">
         <div className="main-app-nav">Skiing Problem</div>
@@ -37,11 +46,7 @@ export class App extends Component {
         ) : (
           <button onClick={() => actions.start()}>Start</button>
         )}
-        <SkiingMap
-          mapMatrix={skiingMap}
-          minHeight={minHeight}
-          maxHeight={maxHeight}
-        />
+        <SkiingMap {...mapProps}/>
         {/*<Footer />*/}
       </div>
     );

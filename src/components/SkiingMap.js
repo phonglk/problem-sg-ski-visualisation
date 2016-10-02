@@ -20,16 +20,18 @@ export default class SkiingMap extends Component {
   }
 
   render() {
-    const { mapMatrix, minHeight, maxHeight } = this.props;
+    const { mapMatrix, minHeight, maxHeight, currentIndex, processingStacks } = this.props;
     return (
       <div id="skiing-map">
         <svg width={SVG_WIDTH} height={SVG_HEIGHT} version="1.1" xmlns="http://www.w3.org/2000/svg">
-          {mapMatrix.map(({ x, y, height }) => {
+          {mapMatrix.map(({ x, y, height }, i) => {
             // console.log(...heightToHSV);
             const props = {
               key: `${x}-${y}`,
               x, y, height,
               fillColor: `rgb(${hsv2rgb(...heightToHSV(height, minHeight, maxHeight)).join(',')})`,
+              isCurrent: i === currentIndex,
+              queueIndex: processingStacks.indexOf(i),
             };
             return <MapElement {...props} />;
           })
