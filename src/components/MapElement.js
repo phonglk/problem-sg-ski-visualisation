@@ -7,7 +7,7 @@ export default class MapElement extends Component {
     super();
   }
   render() {
-    const { x, y, height, fillColor, isCurrent, queueIndex } = this.props;
+    const { x, y, height, fillColor, isCurrent, queueIndex, visited } = this.props;
     const rectProps = {
       width: RECT_SIZE,
       height: RECT_SIZE,
@@ -47,6 +47,17 @@ export default class MapElement extends Component {
         fontSize: 12,
       };
       elements.push(<text {...queueTextProps}>{queueIndex}</text>);
+    }
+    if (visited) {
+      const checkTextProps = {
+        x: rectProps.x + RECT_SIZE - 10,
+        y: rectProps.y + 8,
+        textAnchor: 'right',
+        alignmentBaseline: 'middle',
+        fontSize: 12,
+        fill: 'green',
+      };
+      elements.push(<text {...checkTextProps}>✓</text>);
     }
     return (
       <g>{elements}</g>

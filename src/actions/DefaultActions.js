@@ -46,11 +46,15 @@ export function stop() {
 export function nextStep(isSelfCalled = false) {
   return (dispatch, getState) => {
     const state = getState();
-    if (!isSelfCalled || state.isNextStep) {
-      dispatch(nextStepUpdateState());
-      setTimeout(() => {
-        dispatch(nextStep(true));
-      }, state.stepInterval);
+    if (state.skiingMap.every(({ visited }) => visited)) {
+      dispatch(pause());
+    } else {
+      if (!isSelfCalled || state.isNextStep) {
+        dispatch(nextStepUpdateState());
+        setTimeout(() => {
+          dispatch(nextStep(true));
+        }, state.stepInterval);
+      }
     }
   };
 }
