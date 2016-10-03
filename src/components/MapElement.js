@@ -11,9 +11,9 @@ export default class MapElement extends Component {
     const rectProps = {
       width: RECT_SIZE,
       height: RECT_SIZE,
-      stroke: 'black',
-      strokeWidth: 1,
-      strokeOpacity: 0.5,
+      stroke: fillColor,
+      strokeWidth: 3,
+      strokeOpacity: 1,
       x: x * (RECT_SIZE + 3),
       y: y * (RECT_SIZE + 3),
       fill: fillColor,
@@ -28,7 +28,6 @@ export default class MapElement extends Component {
     if (isCurrent) {
       Object.assign(rectProps, {
         stroke: 'green',
-        strokeWidth: 1,
         strokeOpacity: 1,
       });
       Object.assign(textProps, {
