@@ -1,4 +1,4 @@
-import { START, READ_MAP, PAUSE, NEXT_STEP, RESUME } from '../constants/ActionTypes.js';
+import { START, READ_MAP, PAUSE, NEXT_STEP, RESUME, STOP } from '../constants/ActionTypes.js';
 import { DIRECTIONS } from '../constants';
 
 const defaultSkiingMap = [
@@ -33,6 +33,11 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         isNextStep: false,
+      };
+    case STOP:
+      return {
+        ...state,
+        ...initialState,
       };
     case RESUME:
       return {

@@ -1,4 +1,4 @@
-import { START, READ_MAP, NEXT_STEP, PAUSE, RESUME } from '../constants/ActionTypes';
+import { START, READ_MAP, NEXT_STEP, PAUSE, STOP, RESUME } from '../constants/ActionTypes';
 
 export function readMap() {
   return {
@@ -30,6 +30,19 @@ export function nextStepUpdateState() {
   };
 }
 
+export function stopUpdateState() {
+  return {
+    type: STOP,
+  };
+}
+
+export function stop() {
+  return dispatch => {
+    dispatch(stopUpdateState());
+    dispatch(readMap());
+  };
+}
+
 export function nextStep(isSelfCalled = false) {
   return (dispatch, getState) => {
     const state = getState();
@@ -52,7 +65,6 @@ export function resume() {
 export function start() {
   return dispatch => {
     dispatch(startUpdateState());
-    dispatch(readMap());
     dispatch(nextStep());
   };
 }

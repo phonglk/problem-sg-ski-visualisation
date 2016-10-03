@@ -17,12 +17,8 @@ export class App extends Component {
     return !_.isEqual(nextProps, this.props);
   }
 
-  componentDidUpdate(prevProps) {
-    // setTimeout(() => {
-    //   if (this.props.isNextStep && prevProps.stepsCounter + 1 === this.props.stepsCounter) {
-    //     this.props.dispatch(this.props.actions.nextStep());
-    //   }
-    // }, this.props.stepInterval);
+  componentDidMount() {
+    this.props.dispatch(this.props.actions.readMap());
   }
 
   render() {
@@ -46,6 +42,7 @@ export class App extends Component {
         ) : (
           <button onClick={() => actions.start()}>Start</button>
         )}
+        { isStarted ? (<button onClick={() => actions.stop()}>stop</button>) : null}
         <SkiingMap {...mapProps}/>
         {/*<Footer />*/}
       </div>
