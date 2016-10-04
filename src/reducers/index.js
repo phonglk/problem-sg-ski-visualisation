@@ -11,7 +11,7 @@ const initialState = {
   initialSkiingMap: defaultSkiingMap,
   skiingMap: [],
   stepsCounter: -1,
-  stepInterval: 1000,
+  stepInterval: 800,
   isStarted: false,
   isNextStep: false,
   isFinished: false,
@@ -20,6 +20,7 @@ const initialState = {
   nextIndex: 0,
   currentIndex: -1,
   processingStacks: [],
+  processingPaths: [],
 };
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -99,16 +100,17 @@ function nextStep(state) {
   let { nextIndex, currentIndex } = state;
   const processingStacks = state.processingStacks.slice(0);
   const skiingMap = state.skiingMap.slice(0);
+  const processingPaths = state.processingPaths.slice(0);
 
   if (processingStacks.length === 0) {
-    nextIndex++;
-    currentIndex = nextIndex;
+    currentIndex = nextIndex++;
   } else {
     currentIndex = processingStacks.shift();
   }
   const point = { ...skiingMap[currentIndex] };
   if (!point.visited) { // not visited
     // discover possible paths
+    let isDeadEnd = true;
     DIRECTIONS.forEach(({ x, y }) => {
       const eIndex = findIndexOfElement(skiingMap, {
         x: point.x + x,
@@ -116,15 +118,30 @@ function nextStep(state) {
       });
       if (eIndex !== -1 && point.height > skiingMap[eIndex].height) {
         processingStacks.unshift(eIndex);
+        if (isDeadEnd) isDeadEnd = false;
       }
     });
+    if (isDeadEnd) {
+      processingPaths.forEach((pIdx, idx) => {
+        const trackingPoint = { ...skiingMap[pIdx] };
+        trackingPoint.path = { length: idx + 1, slope: trackingPoint.height - point.height };
+        skiingMap[pIdx] = trackingPoint;
+      });
+      processingPaths.splice(0, processingPaths.length);
+      point.path = { length: 0, slope: 0 };
+    }
+
+    // mark visited
     point.visited = true;
+    // push current point to tracking stacks
+    processingPaths.unshift(currentIndex);
   }
 
   skiingMap[currentIndex] = point;
   return {
     ...state,
     skiingMap,
+    processingPaths,
     nextIndex,
     currentIndex,
     processingStacks,

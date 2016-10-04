@@ -18,19 +18,20 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(this.props.actions.readMap());
+    if(this.props.skiingMap.length === 0) this.props.dispatch(this.props.actions.readMap());
   }
 
   render() {
     const { actions, skiingMap, minHeight, maxHeight, isStarted,
       isNextStep, pause, stop, resume,
-      maxPath, nextIndex, currentIndex, processingStacks } = this.props;
+      maxPath, nextIndex, currentIndex, processingStacks, processingPaths } = this.props;
     const mapProps = {
       mapMatrix: skiingMap,
       minHeight,
       maxHeight,
       currentIndex,
-      processingStacks
+      processingStacks,
+      processingPaths
     };
     return (
       <div className="main-app-container">

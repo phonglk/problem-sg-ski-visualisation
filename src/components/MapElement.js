@@ -7,7 +7,8 @@ export default class MapElement extends Component {
     super();
   }
   render() {
-    const { x, y, height, fillColor, isCurrent, queueIndex, visited } = this.props;
+    const { x, y, height, fillColor, isCurrent, path,
+      queueIndex, visited, processingPathsIdx } = this.props;
     const rectProps = {
       width: RECT_SIZE,
       height: RECT_SIZE,
@@ -34,10 +35,7 @@ export default class MapElement extends Component {
         fontSize: 22,
       });
     }
-    const elements = [
-      <rect {...rectProps} />,
-      <text {...textProps}>{height}</text>,
-    ];
+    let elements = [];
     if (queueIndex > -1) {
       const queueTextProps = {
         x: rectProps.x + RECT_SIZE - 10,
@@ -59,6 +57,33 @@ export default class MapElement extends Component {
       };
       elements.push(<text {...checkTextProps}>✓</text>);
     }
+
+    if (processingPathsIdx > -1) {
+      rectProps.stroke = 'blue';
+      const lengthTextProps = {
+        x: rectProps.x + 5,
+        y: rectProps.y + 8,
+        textAnchor: 'left',
+        alignmentBaseline: 'middle',
+        fontSize: 12,
+        fill: 'black',
+      };
+      elements.push(<text {...lengthTextProps}>{processingPathsIdx + 1}</text>);
+    }
+
+    if (path !== null) {
+      const pathTextProps = {
+        x: rectProps.x + 2,
+        y: rectProps.y + 6,
+        textAnchor: 'left',
+        alignmentBaseline: 'middle',
+        fontSize: 12,
+        fill: 'black',
+      };
+      elements.push(<text {...pathTextProps}>{path.length}|{path.slope}</text>);
+    }
+
+    elements = [<rect {...rectProps} />, <text {...textProps}>{height}</text>].concat(elements);
     return (
       <g>{elements}</g>
     );
