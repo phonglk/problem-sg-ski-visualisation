@@ -49,7 +49,7 @@ export default class SkiingMap extends Component {
           })
           }
           {visualPaths.map(path => (
-            <path d={path} stroke="blue" fill="transparent" stroke-width="3" />
+            <path d={path} stroke="blue" fill="transparent" strokeWidth="3" key={path} />
           ))}
         </svg>
       </div>

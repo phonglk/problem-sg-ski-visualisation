@@ -11,7 +11,7 @@ const initialState = {
   initialSkiingMap: defaultSkiingMap,
   skiingMap: [],
   stepsCounter: -1,
-  stepInterval: 800,
+  stepInterval: 400,
   isStarted: false,
   isNextStep: false,
   isFinished: false,
@@ -81,6 +81,7 @@ function readMap(state) {
         path: null,
         visited: false,
         isDeadEnd: false,
+        paths: [],
       });
     });
   });
@@ -142,28 +143,46 @@ function nextStep(state) {
         if (isDeadEnd) isDeadEnd = false;
       }
     });
+
+    processingPaths.push(currentIndex);
     if (isDeadEnd) {
-      processingPaths.forEach((pIdx, idx) => {
-        const trackingPoint = { ...skiingMap[pIdx] };
-        trackingPoint.path = { length: idx + 1, slope: trackingPoint.height - point.height };
+      processingPaths.slice(0).reverse().forEach((pIdx, idx) => {
+        // console.log(pIdx, currentIndex);
+        const trackingPoint = pIdx === currentIndex ? point : { ...skiingMap[pIdx] };
+        trackingPoint.path = { length: idx, slope: trackingPoint.height - point.height };
+        trackingPoint.paths = processingPaths.slice(0, idx - 1);
         maxPath = checkMaxPath(trackingPoint.path, maxPath);
         skiingMap[pIdx] = trackingPoint;
       });
 
-      if (processingPaths.length > 0) {
-        paths.push(processingPaths.concat([currentIndex]));
+      if (processingPaths.length > 1) {
+        paths.push(processingPaths.slice(0));
       };
 
       processingPaths.splice(0, processingPaths.length);
       point.isDeadEnd = true;
-      point.path = { length: 0, slope: 0 };
-    } else {
-      processingPaths.push(currentIndex);
     }
 
     // mark visited
     point.visited = true;
     // push current point to tracking stacks
+  } else {
+    processingPaths.push(currentIndex);
+    processingPaths.slice(0).reverse().forEach((pIdx, idx) => {
+      const trackingPoint = { ...skiingMap[pIdx] };
+      trackingPoint.path = { 
+        length: idx + point.path.length, 
+        slope: trackingPoint.height - point.height + point.path.slope
+      };
+      // console.log(processingPaths.slice(0), idx, processingPaths.slice(0, idx).slice(0))
+      trackingPoint.paths = processingPaths.slice(0, idx - 1).concat(point.paths);
+      maxPath = checkMaxPath(trackingPoint.path, maxPath);
+      skiingMap[pIdx] = trackingPoint;
+    });
+
+    paths.push(processingPaths.concat(point.paths));
+
+    processingPaths.splice(0, processingPaths.length);
   }
 
   skiingMap[currentIndex] = point;
