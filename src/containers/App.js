@@ -24,14 +24,16 @@ export class App extends Component {
   render() {
     const { actions, skiingMap, minHeight, maxHeight, isStarted,
       isNextStep, pause, stop, resume,
-      maxPath, nextIndex, currentIndex, processingStacks, processingPaths } = this.props;
+      maxPath, nextIndex, currentIndex, processingStacks, processingPaths,
+      paths } = this.props;
     const mapProps = {
       mapMatrix: skiingMap,
       minHeight,
       maxHeight,
       currentIndex,
       processingStacks,
-      processingPaths
+      processingPaths,
+      paths,
     };
     return (
       <div className="main-app-container">

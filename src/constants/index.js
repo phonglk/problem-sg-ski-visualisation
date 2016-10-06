@@ -5,3 +5,5 @@ export const DIRECTIONS = [/* eslint-disable comma-spacing, object-curly-spacing
   {x: 0 , y: 1 }  // top
   /* eslint-enable comma-spacing, object-curly-spacing */
 ];
+
+export const RECT_SIZE = 40;

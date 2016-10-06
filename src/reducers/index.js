@@ -18,7 +18,7 @@ const initialState = {
 
   maxPath: { length: 0, slope: 0 },
 
-  // next tile to be proccessed if processingStacks is empty 
+  // next tile to be proccessed if processingStacks is empty
   nextIndex: 0,
 
   // current processing tile
@@ -28,8 +28,11 @@ const initialState = {
   processingStacks: [],
 
   // Track the path
-  // The paths will complete when a deadend is occured 
+  // The paths will complete when a deadend is occured
   processingPaths: [],
+
+  // store path
+  paths: [],
 };
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -77,6 +80,7 @@ function readMap(state) {
         height: val,
         path: null,
         visited: false,
+        isDeadEnd: false,
       });
     });
   });
@@ -105,8 +109,16 @@ function findIndexOfElement(map, coord) {
   return -1;
 }
 
+function checkMaxPath(path, maxPath) {
+  return (path.length > maxPath.length ||
+        (path.length === maxPath.length && path.slop > maxPath.slope))
+        ? path : maxPath;
+}
+
 function nextStep(state) {
   let { nextIndex, currentIndex } = state;
+  let maxPath = { ...state.maxPath };
+  const paths = state.paths.slice(0); 
   const processingStacks = state.processingStacks.slice(0);
   const skiingMap = state.skiingMap.slice(0);
   const processingPaths = state.processingPaths.slice(0);
@@ -134,21 +146,31 @@ function nextStep(state) {
       processingPaths.forEach((pIdx, idx) => {
         const trackingPoint = { ...skiingMap[pIdx] };
         trackingPoint.path = { length: idx + 1, slope: trackingPoint.height - point.height };
+        maxPath = checkMaxPath(trackingPoint.path, maxPath);
         skiingMap[pIdx] = trackingPoint;
       });
+
+      if (processingPaths.length > 0) {
+        paths.push(processingPaths.concat([currentIndex]));
+      };
+
       processingPaths.splice(0, processingPaths.length);
+      point.isDeadEnd = true;
       point.path = { length: 0, slope: 0 };
+    } else {
+      processingPaths.push(currentIndex);
     }
 
     // mark visited
     point.visited = true;
     // push current point to tracking stacks
-    processingPaths.unshift(currentIndex);
   }
 
   skiingMap[currentIndex] = point;
   return {
     ...state,
+    maxPath,
+    paths,
     skiingMap,
     processingPaths,
     nextIndex,

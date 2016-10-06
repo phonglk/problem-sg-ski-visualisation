@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-
-const RECT_SIZE = 40;
+import { RECT_SIZE } from '../constants';
 
 export default class MapElement extends Component {
   constructor(props) {
