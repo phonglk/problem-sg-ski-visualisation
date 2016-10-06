@@ -26,15 +26,6 @@ export default class MapElement extends Component {
       alignmentBaseline: 'middle',
       fontSize: 18,
     };
-    if (isCurrent) {
-      Object.assign(rectProps, {
-        stroke: 'green',
-        strokeOpacity: 1,
-      });
-      Object.assign(textProps, {
-        fontSize: 22,
-      });
-    }
     let elements = [];
     if (queueIndex > -1) {
       const queueTextProps = {
@@ -69,6 +60,16 @@ export default class MapElement extends Component {
         fill: 'black',
       };
       elements.push(<text {...lengthTextProps}>{processingPathsIdx + 1}</text>);
+    }
+
+    if (isCurrent) {
+      Object.assign(rectProps, {
+        stroke: 'green',
+        strokeOpacity: 1,
+      });
+      Object.assign(textProps, {
+        fontSize: 22,
+      });
     }
 
     if (path !== null) {
