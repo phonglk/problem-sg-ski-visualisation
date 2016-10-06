@@ -17,9 +17,18 @@ const initialState = {
   isFinished: false,
 
   maxPath: { length: 0, slope: 0 },
+
+  // next tile to be proccessed if processingStacks is empty 
   nextIndex: 0,
+
+  // current processing tile
   currentIndex: -1,
+
+  // Recursive Stacks
   processingStacks: [],
+
+  // Track the path
+  // The paths will complete when a deadend is occured 
   processingPaths: [],
 };
 export default function reducer(state = initialState, action) {
