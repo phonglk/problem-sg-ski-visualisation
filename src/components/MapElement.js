@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { RECT_SIZE } from '../constants';
+import { RECT_SIZE, STROKE_SIZE } from '../constants';
 
 export default class MapElement extends Component {
   constructor(props) {
@@ -12,10 +12,10 @@ export default class MapElement extends Component {
       width: RECT_SIZE,
       height: RECT_SIZE,
       stroke: fillColor,
-      strokeWidth: 3,
+      strokeWidth: STROKE_SIZE,
       strokeOpacity: 1,
-      x: x * (RECT_SIZE + 3),
-      y: y * (RECT_SIZE + 3),
+      x: x * (RECT_SIZE + STROKE_SIZE),
+      y: y * (RECT_SIZE + STROKE_SIZE),
       fill: fillColor,
     };
     const textProps = {
@@ -69,18 +69,6 @@ export default class MapElement extends Component {
       Object.assign(textProps, {
         fontSize: 22,
       });
-    }
-
-    if (path !== null) {
-      const pathTextProps = {
-        x: rectProps.x + 2,
-        y: rectProps.y + 6,
-        textAnchor: 'left',
-        alignmentBaseline: 'middle',
-        fontSize: 12,
-        fill: 'black',
-      };
-      elements.push(<text {...pathTextProps}>{path.length}|{path.slope}</text>);
     }
 
     elements = [<rect {...rectProps} />, <text {...textProps}>{height}</text>].concat(elements);

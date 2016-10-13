@@ -1,4 +1,11 @@
-import { START, READ_MAP, NEXT_STEP, PAUSE, STOP, RESUME } from '../constants/ActionTypes';
+import { START, READ_MAP, NEXT_STEP, PAUSE, STOP, RESUME, SELECT_MAP } from '../constants/ActionTypes';
+
+export function selectMap(selected) {
+  return {
+    type: SELECT_MAP,
+    selected,
+  };
+}
 
 export function readMap() {
   return {
@@ -24,7 +31,7 @@ export function resumeUpdateState() {
   };
 }
 
-export function nextStepUpdateState() {
+export function nextStep() {
   return {
     type: NEXT_STEP,
   };
@@ -43,18 +50,16 @@ export function stop() {
   };
 }
 
-export function nextStep(isSelfCalled = false) {
+export function run(isSelfCalled = false) {
   return (dispatch, getState) => {
     const state = getState();
-    if (state.skiingMap.every(({ visited }) => visited)) {
+    if (state.skiingMap.stateMap.every(({ visited }) => visited)) {
       dispatch(pause());
     } else {
-      if (!isSelfCalled || state.isNextStep) {
-        dispatch(nextStepUpdateState());
-        setTimeout(() => {
-          dispatch(nextStep(true));
-        }, state.stepInterval);
-      }
+      dispatch(nextStep());
+      setTimeout(() => {
+        dispatch(run(true));
+      }, state.stepInterval);
     }
   };
 }

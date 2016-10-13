@@ -4,50 +4,30 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as DefaultActions from '../actions/DefaultActions';
 // import Counter from '../components/Counter';
-import SkiingMap from '../components/SkiingMap';
+// import SkiingMap from '../components/SkiingMap';
 // import Footer from '../components/Footer';
+import MapSelection from './MapSelection';
+import SkiingMap from './SkiingMap';
 
 export class App extends Component {
-  static propTypes = {
-    actions: PropTypes.object.isRequired,
-    skiingMap: PropTypes.array.isRequired,
-  }
 
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(nextProps, this.props);
   }
 
   componentDidMount() {
-    if(this.props.skiingMap.length === 0) this.props.dispatch(this.props.actions.readMap());
+    // if(this.props.skiingMap.length === 0) this.props.dispatch(this.props.actions.readMap());
   }
 
   render() {
-    const { actions, skiingMap, minHeight, maxHeight, isStarted,
-      isNextStep, pause, stop, resume,
-      maxPath, nextIndex, currentIndex, processingStacks, processingPaths,
-      paths } = this.props;
-    const mapProps = {
-      mapMatrix: skiingMap,
-      minHeight,
-      maxHeight,
-      currentIndex,
-      processingStacks,
-      processingPaths,
-      paths,
-    };
+
     return (
       <div className="main-app-container">
         <div className="main-app-nav">Skiing Problem</div>
-        { isStarted ? isNextStep ? (
-          <button onClick={() => actions.pause()}>pause</button>
-        ) : (
-          <button onClick={() => actions.resume()}>resume</button>
-        ) : (
-          <button onClick={() => actions.start()}>Start</button>
-        )}
-        { isStarted ? (<button onClick={() => actions.stop()}>stop</button>) : null}
-        <SkiingMap {...mapProps}/>
-        {/*<Footer />*/}
+        <MapSelection />
+        <button onClick={this.props.actions.run}>RUN</button>
+        <button onClick={this.props.actions.nextStep}>NEXT</button>
+        <SkiingMap />
       </div>
     );
   }
