@@ -18,18 +18,23 @@ function heightToHSV(height, minHeight, maxHeight) {
 }
 
 function getCenterOfTile(point) {
-  const x = point.x * (RECT_SIZE + STROKE_SIZE / 2) + RECT_SIZE / 2 + STROKE_SIZE;
-  const y = point.y * (RECT_SIZE + STROKE_SIZE / 2) + RECT_SIZE / 2 + STROKE_SIZE;
+  const x = point.x * (RECT_SIZE + STROKE_SIZE) + RECT_SIZE / 2;
+  const y = point.y * (RECT_SIZE + STROKE_SIZE) + RECT_SIZE / 2;
   return { x, y };
 }
 
 function tilesToPath(idxes, stateMap) {
   return 'M' + idxes.map((idx) => {
     const point = stateMap[idx];
-    const x = point.x * (RECT_SIZE) + RECT_SIZE / 2;
-    const y = point.y * (RECT_SIZE) + RECT_SIZE / 2;
+    const { x, y } = getCenterOfTile(point);
     return `${x} ${y}`;
   }).join(' L ');
+}
+
+function getHeightDiff(paths, stateMap) {
+  const start = stateMap[paths[0]];
+  const end = stateMap[paths[paths.length - 1]];
+  return start.height - end.height;
 }
 
 export class SkiingMap extends Component {
@@ -37,21 +42,63 @@ export class SkiingMap extends Component {
     const { stateMap, minHeight, maxHeight,
       currentIdx, processingStack,
     } = this.props;
-    // const visualPaths = paths.map((idxes) => {
-    //   return 'M' + idxes.map((idx) => {
-    //     const point = stateMap[idx];
-    //     const x = point.x * (RECT_SIZE) + RECT_SIZE / 2;
-    //     const y = point.y * (RECT_SIZE) + RECT_SIZE / 2;
-    //     return `${x} ${y}`;
-    //   }).join(' L ');
-    // });
+
+    let bestPath = [];
     const connections = stateMap.reduce((prev, cur, idx) => {
+
+      // build paths
+      const stack = [idx];
+      const parentRef = {}; // child -> parent
+      parentRef[idx] = null;
+
+      while (stack.length > 0) {
+        const stackIdx = stack.shift();
+        const tile = stateMap[stackIdx];
+        if (tile.nextTiles.length > 0) {
+          stack.push(...tile.nextTiles);
+          tile.nextTiles.forEach((childId) => {
+            parentRef[childId] = stackIdx;
+          });
+        } else {
+          // This is a leaf
+          let parent = stackIdx;
+          const p = [];
+          while (parent !== null) {
+            p.unshift(parent);
+            parent = parentRef[parent];
+          }
+          console.log(p.map(i => stateMap[i].height).join(' -> '));
+          if (p.length > 1 &&
+              (p.length > bestPath.length ||
+                (p.length === bestPath.length &&
+                  getHeightDiff(p, stateMap) > getHeightDiff(bestPath, stateMap)
+                )
+              )
+            ) {
+            bestPath = p;
+          }
+        }
+      }
+
       if (cur.nextTiles.length > 0) cur.nextTiles.forEach((nId) => {
         prev.push([idx, nId]);
       });
       return prev;
     }, []);
-    // const connectionVisual = connections.map((idxes) => tilesToPath(idxes, stateMap));
+
+    const paths = {};
+    connections.forEach(([start, end]) => {
+      const startPath = paths[start];
+      //
+      if (startPath) return;
+      const endPath = paths[end];
+      if (typeof endPath !== 'undefined') {
+        paths[start] = [end].concat(endPath);
+      } else {
+        paths[start] = [end];
+      }
+    });
+
     const connectionVisual = connections.map(([start, end]) => {
       const s = getCenterOfTile(stateMap[start]);
       const e = getCenterOfTile(stateMap[end]);
@@ -68,7 +115,7 @@ export class SkiingMap extends Component {
       <div id="skiing-map">
         <svg width={SVG_WIDTH} height={SVG_HEIGHT} version="1.1" xmlns="http://www.w3.org/2000/svg">
           <defs>
-              <marker id="arrow" markerWidth="10" markerHeight="10" refx="0" refy="3" orient="auto" markerUnits="strokeWidth" viewBox="-3 -3 6 6">
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth" viewBox="-3 -3 6 6">
                 <path d="M-3,-3 L-3,3 L3,0 z" fill="#000" strokeWidth="1" stroke="#fff" />
               </marker>
           </defs>
@@ -80,15 +127,18 @@ export class SkiingMap extends Component {
               fillColor: `rgb(${hsv2rgb(...heightToHSV(height, minHeight, maxHeight)).join(',')})`,
               isCurrent: i === currentIdx,
               // queueIndex: processingStacks.indexOf(i),
-              // visited,
+              visited,
               // processingPathsIdx: processingPaths.indexOf(i),
             };
             return <MapElement {...props} />;
           })
           }
           {connectionVisual.map((path) => (
-            <path key={path} d={path} stroke="transparent" fill="transparent" strokeWidth="1" key={path} markerMid="url(#arrow)"/>
+            <path d={path} stroke="transparent" fill="transparent" strokeWidth="1" key={path} markerMid="url(#arrow)"/>
           ))}
+          {bestPath.length > 1 ? (
+            <path d={tilesToPath(bestPath, stateMap)} stroke="black" fill="transparent" strokeWidth="1" />
+          ) : null}
         </svg>
       </div>
     );

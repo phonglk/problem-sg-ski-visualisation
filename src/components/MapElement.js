@@ -48,18 +48,18 @@ export default class MapElement extends Component {
       elements.push(<text {...checkTextProps}>✓</text>);
     }
 
-    if (processingPathsIdx > -1) {
-      rectProps.stroke = 'blue';
-      const lengthTextProps = {
-        x: rectProps.x + 5,
-        y: rectProps.y + 8,
-        textAnchor: 'left',
-        alignmentBaseline: 'middle',
-        fontSize: 12,
-        fill: 'black',
-      };
-      elements.push(<text {...lengthTextProps}>{processingPathsIdx + 1}</text>);
-    }
+    // if (processingPathsIdx > -1) {
+    //   rectProps.stroke = 'blue';
+    //   const lengthTextProps = {
+    //     x: rectProps.x + 5,
+    //     y: rectProps.y + 8,
+    //     textAnchor: 'left',
+    //     alignmentBaseline: 'middle',
+    //     fontSize: 12,
+    //     fill: 'black',
+    //   };
+    //   elements.push(<text {...lengthTextProps}>{processingPathsIdx + 1}</text>);
+    // }
 
     if (isCurrent) {
       Object.assign(rectProps, {
