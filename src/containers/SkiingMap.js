@@ -40,7 +40,7 @@ function getHeightDiff(paths, stateMap) {
 export class SkiingMap extends Component {
   render() {
     const { stateMap, minHeight, maxHeight,
-      currentIdx, processingStack,
+      currentIdx, processingStack, mapHeight, mapWidth
     } = this.props;
 
     let bestPath = [];
@@ -67,7 +67,7 @@ export class SkiingMap extends Component {
             p.unshift(parent);
             parent = parentRef[parent];
           }
-          console.log(p.map(i => stateMap[i].height).join(' -> '));
+          console.log(p.map((i) => stateMap[i].height).join(' -> '));
           if (p.length > 1 &&
               (p.length > bestPath.length ||
                 (p.length === bestPath.length &&
@@ -113,9 +113,13 @@ export class SkiingMap extends Component {
     });
     return (
       <div id="skiing-map">
-        <svg width={SVG_WIDTH} height={SVG_HEIGHT} version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width={mapWidth * (RECT_SIZE + STROKE_SIZE * 2)}
+          height={mapHeight * (RECT_SIZE + STROKE_SIZE * 2)}
+          version="1.1" xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
-              <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth" viewBox="-3 -3 6 6">
+              <marker id="arrow" markerWidth="10" markerHeight="10" refx="0" refy="3" orient="auto" markerUnits="strokeWidth" viewBox="-3 -3 6 6">
                 <path d="M-3,-3 L-3,3 L3,0 z" fill="#000" strokeWidth="1" stroke="#fff" />
               </marker>
           </defs>
@@ -150,7 +154,11 @@ SkiingMap.propTypes = {
 };
 
 export default connect(
-  (state) => state.skiingMap,
+  (state) => ({
+    ...state.skiingMap,
+    mapHeight: state.skiingMapSelection.map.length,
+    mapWidth: state.skiingMapSelection.map[0].length,
+  }),
   (dispatch) => ({
     dispatch,
   })
