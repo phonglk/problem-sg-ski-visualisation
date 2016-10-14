@@ -5,9 +5,6 @@ import { connect } from 'react-redux';
 import MapElement from '../components/MapElement';
 import { RECT_SIZE, STROKE_SIZE } from '../constants';
 
-const SVG_WIDTH = 300;
-const SVG_HEIGHT = 300;
-
 function heightToHSV(height, minHeight, maxHeight) {
   const relVal = ((height - minHeight) / (maxHeight - minHeight)) * 100;
   return [
@@ -44,6 +41,7 @@ export class SkiingMap extends Component {
     } = this.props;
 
     let bestPath = [];
+    let _counter = 0;
     const connections = stateMap.reduce((prev, cur, idx) => {
 
       // build paths
@@ -64,10 +62,11 @@ export class SkiingMap extends Component {
           let parent = stackIdx;
           const p = [];
           while (parent !== null) {
+            _counter++;
             p.unshift(parent);
             parent = parentRef[parent];
           }
-          console.log(p.map((i) => stateMap[i].height).join(' -> '));
+          // console.log(p.map((i) => stateMap[i].height).join(' -> '));
           if (p.length > 1 &&
               (p.length > bestPath.length ||
                 (p.length === bestPath.length &&
@@ -85,6 +84,8 @@ export class SkiingMap extends Component {
       });
       return prev;
     }, []);
+
+    // console.log('counter: ', _counter);
 
     const paths = {};
     connections.forEach(([start, end]) => {

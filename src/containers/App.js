@@ -28,6 +28,7 @@ export class App extends Component {
         <button onClick={this.props.actions.run}>RUN</button>
         <button onClick={this.props.actions.nextStep}>NEXT</button>
         <SkiingMap />
+        <div>Problem: http://geeks.redmart.com/2015/01/07/skiing-in-singapore-a-coding-diversion/</div>
       </div>
     );
   }
